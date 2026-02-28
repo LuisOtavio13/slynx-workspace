@@ -78,25 +78,25 @@ impl TypesModule {
     }
 
     pub fn int_id(&self) -> TypeId {
-        TypeId::from_raw(0)
+        self.builtins.int
     }
     pub fn float_id(&self) -> TypeId {
-        TypeId::from_raw(1)
+        self.builtins.float
     }
     pub fn str_id(&self) -> TypeId {
-        TypeId::from_raw(2)
+        self.builtins.str
     }
     pub fn void_id(&self) -> TypeId {
-        TypeId::from_raw(3)
+        self.builtins.void
     }
     pub fn infer_id(&self) -> TypeId {
-        TypeId::from_raw(4)
+        self.builtins.infer
     }
     pub fn generic_component_id(&self) -> TypeId {
-        TypeId::from_raw(5)
+        self.builtins.generic_component
     }
     pub fn bool_id(&self) -> TypeId {
-        TypeId::from_raw(6)
+        self.builtins.bool
     }
     ///Inserts a new variable on this module
     pub fn insert_variable(&mut self, varid: VariableId, ty: TypeId) {
