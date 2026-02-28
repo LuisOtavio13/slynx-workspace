@@ -122,7 +122,7 @@ impl Lexer {
                     }
                 }
                 '/' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::slasheq(idx)
                     } else {
@@ -178,9 +178,15 @@ impl Lexer {
                     }
                     idx -= 1;
                     if float_value {
-                        Token::float(buffer.parse::<f32>().unwrap(), start, idx)
+                        match buffer.parse::<f32>() {
+                            Ok(value) => Token::float(value, start, idx),
+                            Err(_) => return Err(LexerError::MalformedNumber { number: buffer }),
+                        }
                     } else {
-                        Token::int(buffer.parse::<i32>().unwrap(), start, idx)
+                        match buffer.parse::<i32>() {
+                            Ok(value) => Token::int(value, start, idx),
+                            Err(_) => return Err(LexerError::MalformedNumber { number: buffer }),
+                        }
                     }
                 }
                 c if c.is_alphabetic() || *c == '_' => {

@@ -198,7 +198,7 @@ impl SlynxContext {
                     Some(ParseError::UnexpectedEndOfInput) => {
                         let (line, column, src) = self.get_line_info(
                             &self.entry_point,
-                            self.lines.get(&self.entry_point).unwrap().len() - 1,
+                            self.lines.get(&self.entry_point).unwrap().len().max(1) - 1,
                         );
                         let err = SlynxError {
                             line,
