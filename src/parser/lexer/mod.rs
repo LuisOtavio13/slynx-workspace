@@ -45,7 +45,7 @@ impl Lexer {
             };
             let tk = match tk {
                 '&' => {
-                    if chars[idx + 1] == '&' {
+                    if let Some('&') = chars.get(idx + 1) {
                         idx += 1;
                         Token::and(idx)
                     } else {
@@ -53,7 +53,7 @@ impl Lexer {
                     }
                 }
                 '|' => {
-                    if chars[idx + 1] == '|' {
+                    if let Some('|') = chars.get(idx + 1) {
                         idx += 1;
                         Token::or(idx)
                     } else {
@@ -67,7 +67,7 @@ impl Lexer {
                 '}' => Token::rbrace(idx),
                 ';' => Token::semicolon(idx),
                 '<' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::lte(idx)
                     } else {
@@ -75,7 +75,7 @@ impl Lexer {
                     }
                 }
                 '>' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::gte(idx)
                     } else {
@@ -83,7 +83,7 @@ impl Lexer {
                     }
                 }
                 '=' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::eqeq(idx)
                     } else {
@@ -94,7 +94,7 @@ impl Lexer {
                 ':' => Token::colon(idx),
                 ',' => Token::comma(idx),
                 '+' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::pluseq(idx)
                     } else {
@@ -102,10 +102,10 @@ impl Lexer {
                     }
                 }
                 '-' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::subeq(idx)
-                    } else if chars[idx + 1] == '>' {
+                    } else if let Some('>') = chars.get(idx + 1) {
                         let out = Token::arrow(idx);
                         idx += 1;
                         out
@@ -114,7 +114,7 @@ impl Lexer {
                     }
                 }
                 '*' => {
-                    if chars[idx + 1] == '=' {
+                    if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::stareq(idx)
                     } else {
@@ -133,20 +133,23 @@ impl Lexer {
                     let mut buffer = String::new();
                     idx += 1;
                     let start = idx;
-                    while idx < chars.len() && chars[idx] != '"' {
-                        if chars[idx] == '\\' {
+                    while idx < chars.len()
+                        && let Some(c) = chars.get(idx)
+                        && *c != '"'
+                    {
+                        if *c == '\\' {
                             idx += 1;
-                            match chars[idx] {
+                            match c {
                                 'n' => buffer.push('\n'),
                                 't' => buffer.push('\t'),
                                 'r' => buffer.push('\r'),
-                                c @ '0'..='9' => buffer.push(c),
+                                c @ '0'..='9' => buffer.push(*c),
                                 '\\' => buffer.push('\\'),
                                 '"' => buffer.push('"'),
                                 _ => buffer.push('\\'),
                             }
                         } else {
-                            buffer.push(chars[idx]);
+                            buffer.push(*c);
                         }
 
                         idx += 1;
@@ -164,8 +167,10 @@ impl Lexer {
                     let mut buffer = String::new();
                     let start = idx;
                     let mut float_value = false;
-                    while idx < chars.len() && (chars[idx].is_ascii_digit() || chars[idx] == '.') {
-                        if chars[idx] == '.' {
+                    while let Some(c) = chars.get(idx)
+                        && (c.is_ascii_digit() || *c == '.')
+                    {
+                        if *c == '.' {
                             float_value = true;
                         }
                         buffer.push(chars[idx]);
