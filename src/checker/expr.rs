@@ -70,6 +70,11 @@ impl TypeChecker {
         args: &mut [HirExpression],
         expected: &[TypeId],
     ) -> Result<()> {
+        debug_assert_eq!(
+            args.len(),
+            expected.len(),
+            "arity must be checked before arg validation"
+        );
         for (arg, expected_ty) in args.iter_mut().zip(expected.iter().copied()) {
             arg.ty = self.get_type_of_expr(arg)?;
             arg.ty = self.unify(&arg.ty, &expected_ty, &arg.span)?;
@@ -82,6 +87,11 @@ impl TypeChecker {
         args: &mut [HirExpression],
         expected: &[TypeId],
     ) -> Result<()> {
+        debug_assert_eq!(
+            args.len(),
+            expected.len(),
+            "arity must be checked before arg defaulting"
+        );
         for (arg, expected_ty) in args.iter_mut().zip(expected.iter().copied()) {
             self.default_expr(arg)?;
             arg.ty = self.unify(&arg.ty, &expected_ty, &arg.span)?;

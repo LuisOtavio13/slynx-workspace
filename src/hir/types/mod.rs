@@ -4,29 +4,40 @@ pub use tys::*;
 use crate::hir::{TypeId, VariableId, symbols::SymbolPointer};
 use std::collections::HashMap;
 
+const INT_IDX: usize = 0;
+const FLOAT_IDX: usize = 1;
+const STR_IDX: usize = 2;
+const VOID_IDX: usize = 3;
+const INFER_IDX: usize = 4;
+const GENERIC_COMPONENT_IDX: usize = 5;
+const BOOL_IDX: usize = 6;
+
+const BUILTIN_TYPES: [HirType; 7] = [
+    HirType::Int,
+    HirType::Float,
+    HirType::Str,
+    HirType::Void,
+    HirType::Infer,
+    HirType::GenericComponent,
+    HirType::Bool,
+];
+
 #[derive(Debug, Clone)]
 pub struct BuiltinTypes {
     int: TypeId,
-    int_ty: HirType,
 
     float: TypeId,
-    float_ty: HirType,
 
     str: TypeId,
-    str_ty: HirType,
 
     void: TypeId,
-    void_ty: HirType,
 
     ///Won't appear on final IR, just so the type checker knows what must be inferred
     infer: TypeId,
-    infer_ty: HirType,
 
     generic_component: TypeId,
-    generic_component_ty: HirType,
 
     bool: TypeId,
-    bool_ty: HirType,
 }
 
 impl Default for BuiltinTypes {
@@ -37,29 +48,14 @@ impl Default for BuiltinTypes {
 
 impl BuiltinTypes {
     pub fn new() -> Self {
-        const INT_IDX: u64 = 0;
-        const FLOAT_IDX: u64 = 1;
-        const STR_IDX: u64 = 2;
-        const VOID_IDX: u64 = 3;
-        const INFER_IDX: u64 = 4;
-        const GENERIC_COMPONENT_IDX: u64 = 5;
-        const BOOL_IDX: u64 = 6;
-
         Self {
-            int: TypeId::from_raw(INT_IDX),
-            int_ty: HirType::Int,
-            float: TypeId::from_raw(FLOAT_IDX),
-            float_ty: HirType::Float,
-            str: TypeId::from_raw(STR_IDX),
-            str_ty: HirType::Str,
-            void: TypeId::from_raw(VOID_IDX),
-            void_ty: HirType::Void,
-            infer: TypeId::from_raw(INFER_IDX),
-            infer_ty: HirType::Infer,
-            generic_component: TypeId::from_raw(GENERIC_COMPONENT_IDX),
-            generic_component_ty: HirType::GenericComponent,
-            bool: TypeId::from_raw(BOOL_IDX),
-            bool_ty: HirType::Bool,
+            int: TypeId::from_raw(INT_IDX as u64),
+            float: TypeId::from_raw(FLOAT_IDX as u64),
+            str: TypeId::from_raw(STR_IDX as u64),
+            void: TypeId::from_raw(VOID_IDX as u64),
+            infer: TypeId::from_raw(INFER_IDX as u64),
+            generic_component: TypeId::from_raw(GENERIC_COMPONENT_IDX as u64),
+            bool: TypeId::from_raw(BOOL_IDX as u64),
         }
     }
 }
@@ -78,15 +74,7 @@ impl TypesModule {
     pub fn new() -> Self {
         let builtins = BuiltinTypes::new();
         Self {
-            types: vec![
-                builtins.int_ty.clone(),
-                builtins.float_ty.clone(),
-                builtins.str_ty.clone(),
-                builtins.void_ty.clone(),
-                builtins.infer_ty.clone(),
-                builtins.generic_component_ty.clone(),
-                builtins.bool_ty.clone(),
-            ],
+            types: BUILTIN_TYPES.to_vec(),
             builtins,
             type_names: HashMap::new(),
             variables: HashMap::new(),
