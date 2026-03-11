@@ -122,6 +122,13 @@ impl Lexer {
                     if let Some('=') = chars.get(idx + 1) {
                         idx += 1;
                         Token::slasheq(idx)
+                    } else if let Some('/') = chars.get(idx +1){
+                        while idx < chars.len(){
+                            if chars.get(idx) == Some(&'\n'){
+                                lines.push(idx);
+                            }
+                            idx += 1;
+                        }
                     } else {
                         Token::slash(idx)
                     }

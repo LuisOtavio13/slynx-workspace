@@ -107,6 +107,15 @@ impl std::fmt::Display for Token {
 }
 
 impl Token {
+    pub fn comcomment(pos: usize) -> Self {
+        Self {
+        kind: TokenKind::CommonComent,
+        span: Span {
+            end: pos, 
+            start: pos,
+        },
+        }
+    }
     pub fn bitor(pos: usize) -> Self {
         Self {
             kind: TokenKind::BitOr,
